@@ -17,64 +17,53 @@ interface Voice {
   attack?: number;
 }
 
+/** The pitch of the menu tick. Select and back are built from the same tick, a fourth apart. */
+const TICK_HZ = 5460;
+/** A perfect fourth: the step between the two notes of the select and back sounds. */
+const FOURTH = 4 / 3;
+
 /**
- * Original sounds in the spirit of a classic console menu: crisp, high ticks and short pops in a
- * little shared reverb. They lean percussive rather than tonal: short noise clicks in the 3–5 kHz
- * range carry each sound, and the pitched parts are too brief to read as a "beep".
+ * The menu tick at any pitch: a short, bright noise click leading into a brief ring, with the
+ * faintest inharmonic overtones (ratios ~1.43 and ~2.25, like a struck bar) for a trace of
+ * shine. Each overtone dies faster than the one below it. `level` scales the whole tick.
+ */
+function tick(pitch: number, { at = 0, ring = 0.09, level = 1 } = {}): Voice[] {
+  const partial = (ratio: number, duration: number, volume: number): Voice => ({
+    source: 'sine',
+    from: pitch * ratio,
+    at,
+    duration,
+    volume: volume * level,
+    attack: 0.001,
+  });
+  return [
+    {
+      source: 'noise',
+      filter: { type: 'bandpass', frequency: pitch * 1.664, q: 0.9 },
+      at,
+      duration: 0.01,
+      volume: 0.22 * level,
+      attack: 0.001,
+    },
+    { ...partial(1, ring, 0.05), to: pitch * 0.982 },
+    partial(1.434, ring * 0.67, 0.006),
+    partial(2.249, ring * 0.33, 0.002),
+  ];
+}
+
+/**
+ * Original sounds in the spirit of a classic console menu: crisp, high ticks in a small, tight
+ * room. They lean percussive rather than tonal, so nothing reads as a "beep".
  */
 const SOUNDS: Record<SoundName, readonly Voice[]> = {
-  // A crisp "tik": a short, bright click leading into a brief ring around 5.46 kHz, with the
-  // faintest inharmonic overtones (ratios ~1.43 and ~2.25, like a struck bar) for a trace of shine.
-  // Each overtone dies faster than the one below it.
-  move: [
-    {
-      source: 'noise',
-      filter: { type: 'bandpass', frequency: 9085, q: 0.9 },
-      duration: 0.01,
-      volume: 0.22,
-      attack: 0.001,
-    },
-    { source: 'sine', from: 5460, to: 5360, duration: 0.09, volume: 0.05, attack: 0.001 },
-    { source: 'sine', from: 7830, duration: 0.06, volume: 0.006, attack: 0.001 },
-    { source: 'sine', from: 12280, duration: 0.03, volume: 0.002, attack: 0.001 },
-  ],
-  // A bright click that lifts, over a light thump.
-  confirm: [
-    {
-      source: 'noise',
-      filter: { type: 'bandpass', frequency: 4000, q: 0.9 },
-      duration: 0.015,
-      volume: 0.2,
-      attack: 0.001,
-    },
-    {
-      source: 'sine',
-      from: 700,
-      to: 1100,
-      duration: 0.06,
-      volume: 0.1,
-      filter: { type: 'lowpass', frequency: 2500 },
-    },
-    { source: 'sine', from: 200, to: 140, duration: 0.06, volume: 0.06 },
-  ],
-  // The same shape, falling.
+  // A crisp "tik".
+  move: tick(TICK_HZ),
+  // "Tik-ting": the tick, then a slightly longer one a fourth higher.
+  confirm: [...tick(TICK_HZ), ...tick(TICK_HZ * FOURTH, { at: 0.055, ring: 0.14, level: 0.9 })],
+  // "Tik-tung": the mirror image, stepping a fourth down.
   back: [
-    {
-      source: 'noise',
-      filter: { type: 'bandpass', frequency: 3500, q: 0.9 },
-      duration: 0.015,
-      volume: 0.18,
-      attack: 0.001,
-    },
-    {
-      source: 'sine',
-      from: 1000,
-      to: 600,
-      duration: 0.06,
-      volume: 0.09,
-      filter: { type: 'lowpass', frequency: 2200 },
-    },
-    { source: 'sine', from: 180, to: 120, duration: 0.05, volume: 0.05 },
+    ...tick(TICK_HZ, { level: 0.9 }),
+    ...tick(TICK_HZ / FOURTH, { at: 0.055, ring: 0.12, level: 0.85 }),
   ],
   // A dull, low bump.
   denied: [
