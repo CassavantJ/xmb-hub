@@ -2,15 +2,16 @@ import { getAudio, whenRunning } from './engine';
 
 /**
  * Original ambient background music, generated live: a slow D major pad progression with a soft
- * bass, and a sparse bell melody drawn from the pentatonic scale so every note fits every chord.
- * It never repeats exactly (the bells are random) and costs a handful of oscillators at a time.
+ * bass, and a sparse, mellow mallet melody drawn from the pentatonic scale so every note fits
+ * every chord. It never repeats exactly (the melody is random) and costs a handful of
+ * oscillators at a time.
  */
 
 const CHORD_SECONDS = 9.6;
 /** Chords overlap by this much, so the pad never drops out between them. */
 const CROSSFADE_S = 3.5;
-/** Music bus level once faded in: a quiet bed (about -30 dB RMS) under the UI sounds. */
-export const MUSIC_LEVEL = 0.4;
+/** Music bus level once faded in: a quiet bed well under the UI sounds. */
+export const MUSIC_LEVEL = 0.28;
 const FADE_IN_S = 4;
 const FADE_OUT_S = 1.6;
 const LOOKAHEAD_S = 1.5;
@@ -24,8 +25,8 @@ const PROGRESSION = [
   { bass: 33, pad: [57, 61, 64, 66, 71] }, // A6/9
 ] as const;
 
-/** D major pentatonic, two octaves up, for the bells. */
-const BELL_NOTES = [74, 76, 78, 81, 83, 86, 88, 90] as const;
+/** D major pentatonic, from the middle of the pad upward, for the mallet melody. */
+const BELL_NOTES = [62, 64, 66, 69, 71, 74, 76, 78] as const;
 
 const hz = (midi: number) => 440 * 2 ** ((midi - 69) / 12);
 
@@ -45,13 +46,13 @@ export function createMusic(
   // All pad voices share one low-pass filter that slowly opens and closes.
   const padFilter = context.createBiquadFilter();
   padFilter.type = 'lowpass';
-  padFilter.frequency.value = 1500;
+  padFilter.frequency.value = 1100;
   padFilter.Q.value = 0.5;
   padFilter.connect(destination);
   const lfo = context.createOscillator();
   lfo.frequency.value = 0.045;
   const lfoDepth = context.createGain();
-  lfoDepth.gain.value = 500;
+  lfoDepth.gain.value = 350;
   lfo.connect(lfoDepth).connect(padFilter.frequency);
   lfo.start();
 
@@ -107,26 +108,29 @@ export function createMusic(
 
   const bell = (start: number) => {
     const note = BELL_NOTES[Math.floor(random() * BELL_NOTES.length)] ?? BELL_NOTES[0];
+    // Soft mallet: a gentle attack and a low-pass filter keep it warm rather than beepy.
+    const tone = context.createBiquadFilter();
+    tone.type = 'lowpass';
+    tone.frequency.value = 1800;
     const panner = context.createStereoPanner();
     panner.pan.value = (random() - 0.5) * 1.2;
-    panner.connect(destination);
-    // A struck tone: the fundamental plus two quieter, slightly inharmonic partials.
+    tone.connect(panner).connect(destination);
     for (const [ratio, level] of [
-      [1, 0.03],
-      [2, 0.008],
-      [3.01, 0.003],
+      [1, 0.022],
+      [2, 0.004],
+      [3.01, 0.0015],
     ] as const) {
       const oscillator = context.createOscillator();
       oscillator.frequency.value = hz(note) * ratio;
       const envelope = context.createGain();
       envelope.gain.value = 0;
       envelope.gain.setValueAtTime(0.0001, start);
-      envelope.gain.exponentialRampToValueAtTime(level, start + 0.01);
-      envelope.gain.exponentialRampToValueAtTime(0.0001, start + 3.5 / ratio);
-      oscillator.connect(envelope).connect(panner);
+      envelope.gain.exponentialRampToValueAtTime(level, start + 0.04);
+      envelope.gain.exponentialRampToValueAtTime(0.0001, start + 2.8 / ratio);
+      oscillator.connect(envelope).connect(tone);
       oscillator.start(start);
-      oscillator.stop(start + 3.6);
-      track(oscillator, envelope, ...(ratio === 1 ? [panner] : []));
+      oscillator.stop(start + 2.9);
+      track(oscillator, envelope, ...(ratio === 1 ? [tone, panner] : []));
     }
   };
 
@@ -140,8 +144,8 @@ export function createMusic(
       while (nextBellAt < until) {
         bell(nextBellAt);
         // Sometimes answer with a second note, like a two-note phrase.
-        if (random() < 0.3) bell(nextBellAt + 0.35 + random() * 0.3);
-        nextBellAt += 1.6 + random() * 2.6;
+        if (random() < 0.2) bell(nextBellAt + 0.35 + random() * 0.3);
+        nextBellAt += 2.4 + random() * 3.6;
       }
     },
     stop(at) {

@@ -18,43 +18,67 @@ interface Voice {
 }
 
 /**
- * Original sounds in the spirit of a classic console menu: soft glassy ticks and rounded
- * pops in a little shared reverb. Each is a few enveloped oscillators and noise bursts.
+ * Original sounds in the spirit of a classic console menu: soft ticks and rounded pops in a
+ * little shared reverb. They lean percussive rather than tonal: short noise clicks carry the
+ * attack, and the pitched parts are brief, low and filtered so nothing reads as a "beep".
  */
 const SOUNDS: Record<SoundName, readonly Voice[]> = {
-  // A light, glassy tick: a click of band-passed noise over a quick falling blip.
+  // A light tick: mostly a click of band-passed noise, with a hint of filtered body.
   move: [
     {
       source: 'noise',
-      filter: { type: 'bandpass', frequency: 2600, q: 1.2 },
-      duration: 0.02,
-      volume: 0.3,
+      filter: { type: 'bandpass', frequency: 2200, q: 0.8 },
+      duration: 0.018,
+      volume: 0.28,
       attack: 0.001,
     },
-    { source: 'sine', from: 1650, to: 1380, duration: 0.045, volume: 0.07, attack: 0.001 },
+    {
+      source: 'triangle',
+      from: 900,
+      to: 700,
+      duration: 0.03,
+      volume: 0.05,
+      attack: 0.001,
+      filter: { type: 'lowpass', frequency: 1600 },
+    },
   ],
-  // A soft, rounded pop that lifts, with a faint bell overtone.
+  // A soft, rounded pop that lifts, over a low thump.
   confirm: [
     {
       source: 'noise',
-      filter: { type: 'bandpass', frequency: 1800, q: 1 },
-      duration: 0.025,
-      volume: 0.12,
+      filter: { type: 'bandpass', frequency: 1400, q: 0.8 },
+      duration: 0.02,
+      volume: 0.14,
       attack: 0.001,
     },
-    { source: 'sine', from: 540, to: 820, duration: 0.16, volume: 0.16 },
-    { source: 'sine', from: 1640, at: 0.02, duration: 0.22, volume: 0.03 },
+    {
+      source: 'sine',
+      from: 300,
+      to: 520,
+      duration: 0.09,
+      volume: 0.14,
+      filter: { type: 'lowpass', frequency: 1200 },
+    },
+    { source: 'sine', from: 160, to: 110, duration: 0.08, volume: 0.1 },
   ],
   // The same shape, falling.
   back: [
     {
       source: 'noise',
-      filter: { type: 'bandpass', frequency: 1500, q: 1 },
-      duration: 0.025,
-      volume: 0.1,
+      filter: { type: 'bandpass', frequency: 1200, q: 0.8 },
+      duration: 0.02,
+      volume: 0.12,
       attack: 0.001,
     },
-    { source: 'sine', from: 760, to: 430, duration: 0.14, volume: 0.14 },
+    {
+      source: 'sine',
+      from: 480,
+      to: 260,
+      duration: 0.09,
+      volume: 0.12,
+      filter: { type: 'lowpass', frequency: 1100 },
+    },
+    { source: 'sine', from: 140, to: 100, duration: 0.07, volume: 0.08 },
   ],
   // A dull, low bump.
   denied: [
@@ -79,10 +103,17 @@ const SOUNDS: Record<SoundName, readonly Voice[]> = {
       attack: 1.2,
       filter: { type: 'lowpass', frequency: 1200 },
     },
-    { source: 'sine', from: 369.99, at: 0.15, duration: 2.8, volume: 0.0123, attack: 1.1 },
-    { source: 'sine', from: 440, at: 0.3, duration: 2.6, volume: 0.0105, attack: 1 },
-    { source: 'sine', from: 554.37, at: 0.45, duration: 2.4, volume: 0.0087, attack: 0.9 },
-    { source: 'sine', from: 659.25, at: 0.7, duration: 2.2, volume: 0.0063, attack: 0.8 },
+    // Upper voices are filtered triangles: softer and less pure than sines.
+    ...[
+      { from: 369.99, at: 0.15, duration: 2.8, volume: 0.0123, attack: 1.1 },
+      { from: 440, at: 0.3, duration: 2.6, volume: 0.0105, attack: 1 },
+      { from: 554.37, at: 0.45, duration: 2.4, volume: 0.0087, attack: 0.9 },
+      { from: 659.25, at: 0.7, duration: 2.2, volume: 0.0063, attack: 0.8 },
+    ].map((voice) => ({
+      ...voice,
+      source: 'triangle' as const,
+      filter: { type: 'lowpass' as const, frequency: 1000 },
+    })),
     {
       source: 'noise',
       filter: { type: 'bandpass', frequency: 5000, q: 0.6 },

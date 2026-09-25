@@ -31,7 +31,7 @@ export function buildBuses(context: BaseAudioContext): Buses {
     return input;
   };
 
-  return { sfx: bus(1.8, 0.2), music: bus(0, 0.6) };
+  return { sfx: bus(1.2, 0.2), music: bus(0, 0.6) };
 }
 
 const noiseBuffers = new WeakMap<BaseAudioContext, AudioBuffer>();
