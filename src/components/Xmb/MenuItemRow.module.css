@@ -1,0 +1,100 @@
+/* The icon column is centered on --anchor-x; text runs to the right. */
+.item {
+  position: absolute;
+  top: 0;
+  left: calc(var(--anchor-x) - var(--item-icon) / 2);
+  right: 1rem;
+  max-width: 40rem;
+  height: var(--item-icon);
+  display: grid;
+  grid-template-columns: var(--item-icon) minmax(0, 1fr);
+  align-items: center;
+  column-gap: var(--item-text-gap);
+  pointer-events: auto;
+  transform: translateY(var(--y));
+}
+
+.item[data-position='current'] {
+  --y: calc(var(--bar-y) + var(--sel-top));
+}
+
+.item[data-position='after'] {
+  --y: calc(var(--bar-y) + var(--sel-top) + var(--sel-h) + (var(--offset) - 1) * var(--item-step));
+}
+
+.item[data-position='before'] {
+  --y: calc(
+    var(--bar-y) - var(--above-gap) - var(--item-icon) + (var(--offset) + 1) * var(--item-step)
+  );
+}
+
+.icon {
+  opacity: 0.75;
+  transform: scale(0.78);
+}
+
+.text {
+  position: relative;
+  min-width: 0;
+}
+
+.title {
+  display: block;
+  overflow: hidden;
+  font-size: var(--item-title-size);
+  line-height: 1.25;
+  color: var(--text-muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.badge {
+  margin-left: 0.6em;
+  padding: 0.15em 0.55em;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: 0.62em;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  vertical-align: 0.2em;
+}
+
+/* Hangs below the title so the row height never changes. Visible on the selected item only. */
+.description {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  display: -webkit-box;
+  margin-top: 0.35rem;
+  overflow: hidden;
+  font-size: var(--item-desc-size);
+  line-height: 1.35;
+  color: var(--text-muted);
+  opacity: 0;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.item[data-position='current'] .icon {
+  opacity: 1;
+  transform: scale(1.12);
+  filter: drop-shadow(0 0 0.5rem var(--glow));
+}
+
+.item[data-position='current'] .title {
+  color: var(--text);
+  font-weight: 400;
+  text-shadow: 0 0 0.75rem var(--glow);
+}
+
+.item[data-position='current'] .description {
+  opacity: 1;
+}
+
+.item[aria-disabled='true'] {
+  opacity: 0.45;
+  cursor: default;
+}

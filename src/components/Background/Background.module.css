@@ -1,0 +1,8 @@
+.background {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(120% 70% at 75% 0%, var(--bg-top), transparent 70%),
+    linear-gradient(175deg, var(--bg-top) 0%, var(--bg-mid) 45%, var(--bg-bottom) 100%);
+}

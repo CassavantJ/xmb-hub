@@ -1,0 +1,10 @@
+.panel {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* `visibility` rather than `display` so Phase 2 can fade columns in and out. */
+.panel[data-active='false'] {
+  visibility: hidden;
+}

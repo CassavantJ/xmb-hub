@@ -1,0 +1,30 @@
+/*
+ * Layout tokens shared by the category bar and item columns. Everything is positioned from two
+ * reference lines: --anchor-x (center of the selected category's column) and --bar-y (top of the
+ * category bar). Elements move with transforms only, so Phase 2 can animate them cheaply.
+ */
+.xmb {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+
+  --anchor-x: clamp(5.5rem, 26vw, 34rem);
+  --bar-y: clamp(5rem, 24dvh, 15rem);
+
+  --cat-size: clamp(2.75rem, 5.5vw, 5rem);
+  --cat-gap: clamp(4.75rem, 11vw, 10rem);
+  --label-h: 1.75rem;
+  --label-size: clamp(0.85rem, 1.25vw, 1.1rem);
+
+  --item-icon: clamp(2.25rem, 4vw, 3.5rem);
+  --item-step: calc(var(--item-icon) + clamp(0.6rem, 1.8dvh, 1.25rem));
+  --item-text-gap: clamp(0.75rem, 1.5vw, 1.25rem);
+  --item-title-size: clamp(1rem, 1.5vw, 1.3rem);
+  --item-desc-size: clamp(0.8rem, 1.05vw, 0.95rem);
+
+  /* The selected item sits under the category label, with room for two lines of description. */
+  --sel-top: calc(var(--cat-size) + 0.5rem + var(--label-h) + clamp(0.75rem, 2.5dvh, 1.75rem));
+  --sel-h: calc(var(--item-icon) + 3rem);
+  /* Gap between the category bar and the items scrolled above it. */
+  --above-gap: clamp(0.75rem, 2dvh, 1.5rem);
+}

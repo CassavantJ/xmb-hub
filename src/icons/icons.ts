@@ -1,0 +1,98 @@
+import {
+  Accessibility,
+  Blocks,
+  BookOpen,
+  Braces,
+  Briefcase,
+  Calculator,
+  CalendarDays,
+  ChartLine,
+  Code,
+  Cpu,
+  Dices,
+  Dumbbell,
+  FlaskConical,
+  FolderGit2,
+  Gamepad2,
+  GitBranch,
+  Globe,
+  House,
+  ImageIcon,
+  Joystick,
+  Layers,
+  LayoutGrid,
+  Mail,
+  MapIcon,
+  Music,
+  NotebookPen,
+  Palette,
+  Puzzle,
+  Rocket,
+  RotateCcw,
+  Settings,
+  Sparkles,
+  Swords,
+  Terminal,
+  Timer,
+  User,
+  Volume2,
+  Waves,
+  Wrench,
+  type LucideIcon,
+} from 'lucide-react';
+
+/**
+ * The curated icon set. Config files reference icons by name, so a typo is a type error and
+ * only these icons end up in the bundle. To add one, import it from lucide-react
+ * (https://lucide.dev/icons) and give it a name below.
+ */
+export const icons = {
+  accessibility: Accessibility,
+  blocks: Blocks,
+  book: BookOpen,
+  braces: Braces,
+  briefcase: Briefcase,
+  calculator: Calculator,
+  calendar: CalendarDays,
+  chart: ChartLine,
+  code: Code,
+  cpu: Cpu,
+  dice: Dices,
+  dumbbell: Dumbbell,
+  flask: FlaskConical,
+  'folder-git': FolderGit2,
+  gamepad: Gamepad2,
+  'git-branch': GitBranch,
+  globe: Globe,
+  home: House,
+  image: ImageIcon,
+  joystick: Joystick,
+  layers: Layers,
+  'layout-grid': LayoutGrid,
+  mail: Mail,
+  map: MapIcon,
+  music: Music,
+  notebook: NotebookPen,
+  palette: Palette,
+  puzzle: Puzzle,
+  rocket: Rocket,
+  'rotate-ccw': RotateCcw,
+  settings: Settings,
+  sparkles: Sparkles,
+  swords: Swords,
+  terminal: Terminal,
+  timer: Timer,
+  user: User,
+  volume: Volume2,
+  waves: Waves,
+  wrench: Wrench,
+} as const satisfies Record<string, LucideIcon>;
+
+export type IconName = keyof typeof icons;
+
+/** A curated icon name, or a root-relative path to a single-color SVG in `public/`. */
+export type IconRef = IconName | `/${string}.svg`;
+
+export function isSvgPath(icon: IconRef): icon is `/${string}.svg` {
+  return icon.startsWith('/');
+}

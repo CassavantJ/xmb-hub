@@ -1,0 +1,16 @@
+.icon {
+  display: block;
+  width: 100%;
+  height: 100%;
+  stroke-width: var(--icon-stroke, 1.6px);
+}
+
+/* Keep strokes a constant screen width at any icon size. */
+.icon * {
+  vector-effect: non-scaling-stroke;
+}
+
+.mask {
+  background-color: currentColor;
+  mask: var(--icon-src) center / contain no-repeat;
+}

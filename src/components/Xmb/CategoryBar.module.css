@@ -1,0 +1,46 @@
+.bar {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Each tab is a --cat-gap wide column centered on --anchor-x, shifted by its --offset. */
+.tab {
+  position: absolute;
+  top: var(--bar-y);
+  left: calc(var(--anchor-x) - var(--cat-gap) / 2);
+  width: var(--cat-gap);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  pointer-events: auto;
+  transform: translateX(calc(var(--offset) * var(--cat-gap)));
+}
+
+.icon {
+  width: var(--cat-size);
+  height: var(--cat-size);
+  opacity: 0.6;
+  transform: scale(0.72);
+}
+
+.label {
+  height: var(--label-h);
+  font-size: var(--label-size);
+  line-height: var(--label-h);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  opacity: 0;
+}
+
+.tab[aria-selected='true'] .icon {
+  opacity: 1;
+  transform: none;
+  filter: drop-shadow(0 0 0.6rem var(--glow));
+}
+
+.tab[aria-selected='true'] .label {
+  opacity: 1;
+  text-shadow: 0 0 0.75rem var(--glow);
+}
