@@ -1,5 +1,7 @@
 export const site = {
   name: 'Jake',
+  /** The big title in the startup intro. Matches the domain. */
+  wordmark: 'Ray Lmao',
   /** Apex domain. A placeholder until Phase 5; every `subdomain()` URL derives from it. */
   domain: 'example.com',
   repo: 'https://github.com/CassavantJ/xmb-hub',

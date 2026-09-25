@@ -64,7 +64,7 @@ export function BootIntro({ onReveal, onDone }: BootIntroProps) {
       }}
     >
       <div className={styles.line} />
-      <p className={styles.name}>{site.name}</p>
+      <p className={styles.name}>{site.wordmark}</p>
       <p className={styles.hint}>Press any key to skip</p>
     </div>
   );
