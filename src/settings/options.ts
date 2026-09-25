@@ -2,7 +2,12 @@ import { isThemeId, swatchColor, THEMES, themeForMonth } from '../theme/palette'
 import { preferences, type Preferences } from './preferences';
 
 /** Settings that open a panel of choices. (Replay Intro is an action, not a choice.) */
-export type ChoiceSetting = 'theme' | 'sound' | 'motion';
+export type ChoiceSetting = 'theme' | 'sound' | 'music' | 'motion';
+
+const OFF_ON: Choice[] = [
+  { value: 'off', label: 'Off', swatch: null },
+  { value: 'on', label: 'On', swatch: null },
+];
 
 export interface Choice {
   value: string;
@@ -37,10 +42,8 @@ export function choicesFor(setting: ChoiceSetting, context: ChoiceContext): Choi
       ];
     }
     case 'sound':
-      return [
-        { value: 'off', label: 'Off', swatch: null },
-        { value: 'on', label: 'On', swatch: null },
-      ];
+    case 'music':
+      return OFF_ON;
     case 'motion':
       return [
         {
@@ -60,6 +63,8 @@ export function selectedChoice(setting: ChoiceSetting, current: Preferences): st
       return current.theme;
     case 'sound':
       return current.sound ? 'on' : 'off';
+    case 'music':
+      return current.music ? 'on' : 'off';
     case 'motion':
       return current.motion;
   }
@@ -72,6 +77,9 @@ export function applyChoice(setting: ChoiceSetting, value: string): void {
       break;
     case 'sound':
       preferences.set({ sound: value === 'on' });
+      break;
+    case 'music':
+      preferences.set({ music: value === 'on' });
       break;
     case 'motion':
       if (value === 'system' || value === 'reduced' || value === 'full') {

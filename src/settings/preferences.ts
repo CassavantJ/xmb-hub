@@ -8,12 +8,14 @@ export type MotionChoice = 'system' | 'reduced' | 'full';
 export interface Preferences {
   theme: ThemeChoice;
   sound: boolean;
+  music: boolean;
   motion: MotionChoice;
 }
 
 export const DEFAULT_PREFERENCES: Preferences = {
   theme: 'monthly',
   sound: false,
+  music: false,
   motion: 'system',
 };
 
@@ -28,10 +30,11 @@ export function parsePreferences(raw: string | null): Preferences {
     // Corrupt JSON: fall back to defaults.
   }
   if (typeof saved !== 'object' || saved === null) return DEFAULT_PREFERENCES;
-  const { theme, sound, motion } = saved as Record<string, unknown>;
+  const { theme, sound, music, motion } = saved as Record<string, unknown>;
   return {
     theme: theme === 'monthly' || isThemeId(theme) ? theme : DEFAULT_PREFERENCES.theme,
     sound: typeof sound === 'boolean' ? sound : DEFAULT_PREFERENCES.sound,
+    music: typeof music === 'boolean' ? music : DEFAULT_PREFERENCES.music,
     motion:
       motion === 'system' || motion === 'reduced' || motion === 'full'
         ? motion

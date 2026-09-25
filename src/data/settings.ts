@@ -1,6 +1,6 @@
 import type { IconName } from '../icons/icons';
 
-export type SettingId = 'theme' | 'sound' | 'motion' | 'intro';
+export type SettingId = 'theme' | 'sound' | 'music' | 'motion' | 'intro';
 
 export interface SettingEntry {
   id: SettingId;
@@ -22,6 +22,12 @@ export const settings: readonly SettingEntry[] = [
     title: 'Sound',
     description: 'Soft navigation sounds. Off by default.',
     icon: 'volume',
+  },
+  {
+    id: 'music',
+    title: 'Music',
+    description: 'Calm ambient background music. Off by default.',
+    icon: 'music',
   },
   {
     id: 'motion',

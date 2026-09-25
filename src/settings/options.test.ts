@@ -26,10 +26,12 @@ describe('settings options', () => {
 
   it('applies and reads back choices', () => {
     applyChoice('sound', 'on');
+    applyChoice('music', 'on');
     applyChoice('theme', 'red');
     applyChoice('motion', 'full');
     const current = preferences.get();
     expect(selectedChoice('sound', current)).toBe('on');
+    expect(selectedChoice('music', current)).toBe('on');
     expect(selectedChoice('theme', current)).toBe('red');
     expect(selectedChoice('motion', current)).toBe('full');
   });

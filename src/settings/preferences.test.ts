@@ -7,8 +7,13 @@ describe('parsePreferences', () => {
     expect(parsePreferences(null)).toEqual(DEFAULT_PREFERENCES);
   });
 
-  it('defaults to monthly theme, sound off, system motion', () => {
-    expect(DEFAULT_PREFERENCES).toEqual({ theme: 'monthly', sound: false, motion: 'system' });
+  it('defaults to monthly theme, sound and music off, system motion', () => {
+    expect(DEFAULT_PREFERENCES).toEqual({
+      theme: 'monthly',
+      sound: false,
+      music: false,
+      motion: 'system',
+    });
   });
 
   it('survives corrupt JSON', () => {
@@ -17,17 +22,16 @@ describe('parsePreferences', () => {
   });
 
   it('reads valid values', () => {
-    expect(parsePreferences('{"theme":"teal","sound":true,"motion":"reduced"}')).toEqual({
-      theme: 'teal',
-      sound: true,
-      motion: 'reduced',
-    });
+    expect(
+      parsePreferences('{"theme":"teal","sound":true,"music":true,"motion":"reduced"}'),
+    ).toEqual({ theme: 'teal', sound: true, music: true, motion: 'reduced' });
   });
 
   it('replaces only the fields that are invalid', () => {
-    expect(parsePreferences('{"theme":"plaid","sound":true,"motion":5}')).toEqual({
+    expect(parsePreferences('{"theme":"plaid","sound":true,"music":"yes","motion":5}')).toEqual({
       theme: 'monthly',
       sound: true,
+      music: false,
       motion: 'system',
     });
   });

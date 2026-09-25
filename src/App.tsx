@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
+import { setMusicEnabled } from './audio/music';
 import { AboutPanel } from './components/AboutPanel/AboutPanel';
 import { AppViewer } from './components/AppViewer/AppViewer';
 import { Background } from './components/Background/Background';
@@ -56,6 +57,12 @@ export function App() {
     // Unknown or non-embeddable app ids fall back to the menu. Phase 4 adds a real 404 page.
     if (route.kind === 'app' && !viewing) window.history.replaceState(null, '', '/');
   }, [route, viewing]);
+
+  // Music fades out while an embedded app is open; it likely has audio of its own.
+  const musicOn = preferences.music && viewing === undefined;
+  useEffect(() => {
+    setMusicEnabled(musicOn);
+  }, [musicOn]);
 
   const open = (action: MenuAction) => {
     switch (action.kind) {
