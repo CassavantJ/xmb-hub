@@ -1,14 +1,33 @@
+/*
+ * Theme color as OKLCH lightness/chroma/hue, set per month (or from Settings) by useThemeVariables.
+ * Registering them lets the gradients cross-fade when the theme changes.
+ */
+@property --theme-l {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0.42;
+}
+
+@property --theme-c {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0.13;
+}
+
+@property --theme-h {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 320;
+}
+
 :root {
   color-scheme: dark;
 
   --font-sans: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 
-  /* Theme color as OKLCH hue + chroma. Phase 3 sets these per month and from Settings. */
-  --theme-h: 255;
-  --theme-c: 0.11;
-  --bg-top: oklch(0.44 var(--theme-c) var(--theme-h));
-  --bg-mid: oklch(0.27 calc(var(--theme-c) * 0.85) var(--theme-h));
-  --bg-bottom: oklch(0.15 calc(var(--theme-c) * 0.6) var(--theme-h));
+  --bg-top: oklch(var(--theme-l) var(--theme-c) var(--theme-h));
+  --bg-mid: oklch(calc(var(--theme-l) * 0.62) calc(var(--theme-c) * 0.85) var(--theme-h));
+  --bg-bottom: oklch(calc(var(--theme-l) * 0.35) calc(var(--theme-c) * 0.6) var(--theme-h));
 
   --text: #fff;
   --text-muted: rgb(255 255 255 / 0.82);
@@ -21,11 +40,25 @@
   --dur-fast: 180ms;
 }
 
+/* data-motion is set by useReducedMotion from the Motion setting and the OS preference. */
+:root[data-motion='reduced'] {
+  --dur: 0ms;
+  --dur-fast: 0ms;
+}
+
+/* Before the app has started, follow the OS directly. */
 @media (prefers-reduced-motion: reduce) {
-  :root {
+  :root:not([data-motion]) {
     --dur: 0ms;
     --dur-fast: 0ms;
   }
+}
+
+:root[data-theme-ready] {
+  transition:
+    --theme-l calc(var(--dur) * 3) ease,
+    --theme-c calc(var(--dur) * 3) ease,
+    --theme-h calc(var(--dur) * 3) ease;
 }
 
 *,

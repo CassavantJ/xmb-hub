@@ -12,6 +12,7 @@
   user-select: none;
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
+  transition: transform calc(var(--dur) * 2.8) var(--ease-out);
 
   --anchor-x: clamp(5.5rem, 26vw, 34rem);
   --bar-y: clamp(5rem, 24dvh, 15rem);
@@ -32,4 +33,10 @@
   --sel-h: calc(var(--item-icon) + 3rem);
   /* Gap between the category bar and the items scrolled above it. */
   --above-gap: clamp(0.75rem, 2dvh, 1.5rem);
+}
+
+/* While the intro plays, the menu waits just below its resting place (transform only: it is
+   still painted underneath the overlay, so it counts for load metrics). */
+.xmb[data-entering='true'] {
+  transform: translateY(1.5rem) scale(0.985);
 }

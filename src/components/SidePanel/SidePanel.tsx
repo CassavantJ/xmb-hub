@@ -1,5 +1,6 @@
 import { useId, useRef, type ReactNode } from 'react';
 
+import { playSound } from '../../audio/sounds';
 import { Icon } from '../../icons/Icon';
 import { useIntentLayer } from '../../input/useIntentLayer';
 import { moveFocusWithin } from '../../lib/focus';
@@ -10,7 +11,10 @@ import styles from './SidePanel.module.css';
 interface SidePanelProps {
   title: string;
   onClose: () => void;
-  /** Mark navigable children with `data-panel-item`; up/down and the gamepad move between them. */
+  /**
+   * Mark navigable children with `data-panel-item`; up/down and the gamepad move between them.
+   * Focus starts on the one marked `data-panel-initial`, else the first.
+   */
   children: ReactNode;
 }
 
@@ -18,22 +22,35 @@ interface SidePanelProps {
 export function SidePanel({ title, onClose, children }: SidePanelProps) {
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
-  useModalDialog(ref, onClose, () => ref.current?.querySelector<HTMLElement>('[data-panel-item]'));
+
+  const close = () => {
+    playSound('back');
+    onClose();
+  };
+  const move = (to: number | 'first' | 'last') => {
+    if (moveFocusWithin(ref.current, to)) playSound('move');
+  };
+
+  useModalDialog(
+    ref,
+    close,
+    () =>
+      ref.current?.querySelector<HTMLElement>('[data-panel-initial]') ??
+      ref.current?.querySelector<HTMLElement>('[data-panel-item]'),
+  );
 
   useIntentLayer((intent) => {
     switch (intent.type) {
       case 'back':
       case 'home':
-        onClose();
+        close();
         return true;
       case 'move':
-        if (intent.direction === 'left') onClose();
-        else if (intent.direction !== 'right') {
-          moveFocusWithin(ref.current, intent.direction === 'up' ? -1 : 1);
-        }
+        if (intent.direction === 'left') close();
+        else if (intent.direction !== 'right') move(intent.direction === 'up' ? -1 : 1);
         return true;
       case 'jump':
-        moveFocusWithin(ref.current, intent.to);
+        move(intent.to);
         return true;
       case 'confirm':
         if (ref.current?.contains(document.activeElement)) activateElement(document.activeElement);
@@ -49,7 +66,7 @@ export function SidePanel({ title, onClose, children }: SidePanelProps) {
       className={styles.panel}
       aria-labelledby={titleId}
       onClick={(event) => {
-        if (event.target === event.currentTarget) onClose();
+        if (event.target === event.currentTarget) close();
       }}
     >
       <div className={styles.sheet}>
@@ -57,7 +74,7 @@ export function SidePanel({ title, onClose, children }: SidePanelProps) {
           <h2 id={titleId} className={styles.title}>
             {title}
           </h2>
-          <button type="button" className={styles.close} aria-label="Close" onClick={onClose}>
+          <button type="button" className={styles.close} aria-label="Close" onClick={close}>
             <Icon icon="x" className={styles.closeIcon} />
           </button>
         </header>

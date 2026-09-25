@@ -1,5 +1,6 @@
 import { useLayoutEffect, useMemo, useRef, useState, type MouseEvent } from 'react';
 
+import { playSound } from '../../audio/sounds';
 import { useIntentLayer } from '../../input/useIntentLayer';
 import type { MenuPosition } from '../../menu/menu';
 import type { MenuAction, MenuCategory } from '../../menu/types';
@@ -14,11 +15,13 @@ interface XmbProps {
   initial: MenuPosition;
   /** Opens an item. Plain links clicked with the mouse are followed by the browser instead. */
   onOpen: (action: MenuAction) => void;
+  /** Held slightly offset while the intro plays, then eased into place. */
+  entering?: boolean;
 }
 
 const itemKey = (category: number, item: number) => `${category}:${item}`;
 
-export function Xmb({ menu, initial, onOpen }: XmbProps) {
+export function Xmb({ menu, initial, onOpen, entering = false }: XmbProps) {
   const counts = useMemo(() => menu.map((category) => category.items.length), [menu]);
   const [selection, setSelection] = useState(() =>
     createSelection(counts, initial.category, initial.item),
@@ -41,20 +44,33 @@ export function Xmb({ menu, initial, onOpen }: XmbProps) {
     itemElements.current.get(key)?.focus({ preventScroll: true });
   }, [selection]);
 
-  /** The one place selection changes. `followFocus` is for non-pointer input. */
-  const update = (change: (current: Selection) => Selection, followFocus: boolean) => {
+  /**
+   * The one place selection changes.
+   * - `navigate`: keys, wheel, touch, gamepad. Focus follows and a tick plays.
+   * - `point`: a mouse click on a category. A tick plays.
+   * - `sync`: silently follow keyboard focus, or a click that's about to open an item.
+   */
+  const update = (
+    change: (current: Selection) => Selection,
+    cause: 'navigate' | 'point' | 'sync',
+  ) => {
     const next = change(latest.current);
     if (next === latest.current) return;
     latest.current = next;
-    if (followFocus) focusFollows.current = true;
+    if (cause === 'navigate') focusFollows.current = true;
+    if (cause !== 'sync') playSound('move');
     setSelection(next);
   };
 
   const activate = (category: number, item: number) => {
     const entry = menu[category]?.items[item];
     if (!entry) return;
-    if (entry.disabled) playDenied(itemElements.current.get(itemKey(category, item)));
-    else onOpen(entry.action);
+    if (entry.disabled) {
+      playDenied(itemElements.current.get(itemKey(category, item)));
+      return;
+    }
+    playSound('confirm');
+    onOpen(entry.action);
   };
 
   useIntentLayer((intent) => {
@@ -67,12 +83,15 @@ export function Xmb({ menu, initial, onOpen }: XmbProps) {
             horizontal
               ? withCategory(current, current.category + step, counts)
               : withItem(current, selectedItem(current) + step, counts),
-          true,
+          'navigate',
         );
         return true;
       }
       case 'jump':
-        update((current) => withItem(current, intent.to === 'first' ? 0 : Infinity, counts), true);
+        update(
+          (current) => withItem(current, intent.to === 'first' ? 0 : Infinity, counts),
+          'navigate',
+        );
         return true;
       case 'confirm':
         activate(latest.current.category, selectedItem(latest.current));
@@ -86,12 +105,13 @@ export function Xmb({ menu, initial, onOpen }: XmbProps) {
   const handleItemClick = (category: number, item: number, event: MouseEvent<HTMLElement>) => {
     const entry = menu[category]?.items[item];
     if (!entry) return;
-    update((current) => withItem(current, item, counts, category), false);
+    update((current) => withItem(current, item, counts, category), 'sync');
     if (entry.disabled) {
       event.preventDefault();
       playDenied(event.currentTarget);
       return;
     }
+    playSound('confirm');
     const { action } = entry;
     // Real links: let the browser handle them, including Ctrl/Cmd/Shift-click.
     if (action.kind === 'link') return;
@@ -101,12 +121,12 @@ export function Xmb({ menu, initial, onOpen }: XmbProps) {
   };
 
   return (
-    <div ref={rootRef} className={styles.xmb} data-swipe-area="">
+    <div ref={rootRef} className={styles.xmb} data-swipe-area="" data-entering={entering}>
       <CategoryBar
         categories={menu}
         selected={selection.category}
         onSelect={(category) => {
-          update((current) => withCategory(current, category, counts), false);
+          update((current) => withCategory(current, category, counts), 'point');
         }}
       />
       {menu.map((category, categoryIndex) => (
@@ -126,7 +146,7 @@ export function Xmb({ menu, initial, onOpen }: XmbProps) {
             handleItemClick(categoryIndex, item, event);
           }}
           onItemKeyboardFocus={(item) => {
-            update((current) => withItem(current, item, counts, categoryIndex), false);
+            update((current) => withItem(current, item, counts, categoryIndex), 'sync');
           }}
         />
       ))}
