@@ -23,20 +23,20 @@ interface Voice {
  * range carry each sound, and the pitched parts are too brief to read as a "beep".
  */
 const SOUNDS: Record<SoundName, readonly Voice[]> = {
-  // A light "tik-ting": a very short click, then a brief ring around 4.95 kHz with faint
+  // A light "tik-ting": a very short click, then a brief ring around 5.15 kHz with faint
   // inharmonic overtones (ratios ~1.43 and ~2.25, like a struck bar) for just a hint of metal.
   // Each overtone dies faster than the one below it.
   move: [
     {
       source: 'noise',
-      filter: { type: 'bandpass', frequency: 8230, q: 1.2 },
+      filter: { type: 'bandpass', frequency: 8560, q: 1.2 },
       duration: 0.008,
       volume: 0.18,
       attack: 0.001,
     },
-    { source: 'sine', from: 4950, to: 4860, duration: 0.12, volume: 0.06, attack: 0.001 },
-    { source: 'sine', from: 7100, duration: 0.07, volume: 0.02, attack: 0.001 },
-    { source: 'sine', from: 11135, duration: 0.035, volume: 0.008, attack: 0.001 },
+    { source: 'sine', from: 5150, to: 5055, duration: 0.12, volume: 0.06, attack: 0.001 },
+    { source: 'sine', from: 7385, duration: 0.07, volume: 0.02, attack: 0.001 },
+    { source: 'sine', from: 11580, duration: 0.035, volume: 0.008, attack: 0.001 },
   ],
   // A bright click that lifts, over a light thump.
   confirm: [
