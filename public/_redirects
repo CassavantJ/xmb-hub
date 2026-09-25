@@ -1,0 +1,4 @@
+# Cloudflare Pages routing. Because 404.html exists, Pages no longer falls back to index.html for
+# unknown paths (so they get a real 404). Embedded apps are client-side routes, so rewrite them
+# to the app shell with a 200.
+/app/*  /  200

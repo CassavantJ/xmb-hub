@@ -61,7 +61,7 @@ function aboutItem(profile: Profile): MenuItem {
   return {
     id: 'about',
     title: profile.name,
-    description: profile.headline,
+    description: profile.summary,
     icon: 'user',
     badge: null,
     disabled: false,

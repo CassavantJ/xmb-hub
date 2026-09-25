@@ -6,6 +6,7 @@ import {
   Briefcase,
   Calculator,
   Check,
+  CircleAlert,
   CalendarDays,
   ChartLine,
   Code,
@@ -51,6 +52,7 @@ import {
  */
 export const icons = {
   accessibility: Accessibility,
+  alert: CircleAlert,
   blocks: Blocks,
   book: BookOpen,
   braces: Braces,

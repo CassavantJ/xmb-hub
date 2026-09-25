@@ -1,0 +1,69 @@
+.page {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+}
+
+/* Styled like a console system message: centered text between two hairlines. */
+.message {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  width: min(40rem, 100%);
+  padding: 2.5rem 0;
+  border-block: 1px solid rgb(255 255 255 / 0.35);
+  text-align: center;
+}
+
+.icon {
+  width: 3rem;
+  height: 3rem;
+  filter: drop-shadow(0 0 0.6rem var(--glow));
+}
+
+.title {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 300;
+  text-shadow: 0 0 0.75rem var(--glow);
+}
+
+.text {
+  max-width: 32rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.path {
+  font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  font-size: 0.9em;
+  color: var(--text);
+  word-break: break-all;
+}
+
+.home {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+  padding: 0.7rem 1.25rem;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.1);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.35);
+}
+
+.home:hover,
+.home:focus {
+  background: rgb(255 255 255 / 0.18);
+}
+
+.homeIcon {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}

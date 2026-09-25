@@ -8,7 +8,11 @@ export function AboutPanel({ onClose }: { onClose: () => void }) {
   return (
     <SidePanel title={profile.name} onClose={onClose}>
       <p className={styles.headline}>{profile.headline}</p>
-      <p className={styles.bio}>{profile.bio}</p>
+      <div className={styles.bio}>
+        {profile.about.map((paragraph) => (
+          <p key={paragraph}>{paragraph}</p>
+        ))}
+      </div>
       <ul role="list" className={styles.links}>
         {profile.links.map((link) => {
           const newTab = opensInNewTab(link.url);

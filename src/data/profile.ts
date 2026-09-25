@@ -11,37 +11,31 @@ export interface ProfileLink {
 
 export interface Profile {
   name: string;
+  /** Shown under your name in the About panel. */
   headline: string;
-  bio: string;
+  /** One line under your name in the Home column. */
+  summary: string;
+  /** Paragraphs of the About panel. */
+  about: readonly string[];
+  /** Also listed as items in the Home column. */
   links: readonly ProfileLink[];
 }
 
-// TODO(phase 4): real bio, LinkedIn handle and contact address.
 export const profile: Profile = {
   name: site.name,
   headline: 'Software engineer',
-  bio: 'I build web apps and the occasional game. Everything I ship lives here.',
+  summary: 'I build web apps, small games and useful tools.',
+  about: [
+    "I'm Jake, a software engineer who likes building things people actually enjoy using: fast, thoughtful, and a little bit playful.",
+    'This is where everything I make lives. Apps, games, tools and side projects, wrapped in a menu inspired by the console I grew up with. Pick something and try it out.',
+  ],
   links: [
     {
       id: 'github',
       title: 'GitHub',
       description: 'github.com/CassavantJ',
-      icon: 'git-branch',
+      icon: '/icons/github.svg',
       url: 'https://github.com/CassavantJ',
-    },
-    {
-      id: 'linkedin',
-      title: 'LinkedIn',
-      description: 'Work history and experience',
-      icon: 'briefcase',
-      url: 'https://www.linkedin.com/',
-    },
-    {
-      id: 'email',
-      title: 'Email',
-      description: 'hello@example.com',
-      icon: 'mail',
-      url: 'mailto:hello@example.com',
     },
   ],
 };

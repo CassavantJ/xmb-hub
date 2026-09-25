@@ -115,7 +115,7 @@ const MAX_LATENCY_MS = 250;
 
 /** Plays a UI sound if Sound is on in Settings. Safe to call from anywhere. */
 export function playSound(name: SoundName): void {
-  if (!preferences.get().sound) return;
+  if (!preferences.get().sound || document.hidden) return;
   const audio = getAudio();
   if (!audio) return;
   const { context, buses } = audio;

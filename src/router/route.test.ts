@@ -8,11 +8,16 @@ describe('parseRoute', () => {
     expect(parseRoute('/app/lift-log/')).toEqual({ kind: 'app', appId: 'lift-log' });
   });
 
-  it('treats everything else as the menu', () => {
+  it('parses the menu', () => {
     expect(parseRoute('/')).toEqual({ kind: 'home' });
-    expect(parseRoute('/app/')).toEqual({ kind: 'home' });
-    expect(parseRoute('/app/Bad_Id')).toEqual({ kind: 'home' });
-    expect(parseRoute('/app/palette/extra')).toEqual({ kind: 'home' });
+    expect(parseRoute('/index.html')).toEqual({ kind: 'home' });
+  });
+
+  it('treats everything else as not found', () => {
+    expect(parseRoute('/about')).toEqual({ kind: 'notFound' });
+    expect(parseRoute('/app/')).toEqual({ kind: 'notFound' });
+    expect(parseRoute('/app/Bad_Id')).toEqual({ kind: 'notFound' });
+    expect(parseRoute('/app/palette/extra')).toEqual({ kind: 'notFound' });
   });
 });
 

@@ -79,13 +79,17 @@ export function getAudio(): { context: AudioContext; buses: Buses } | null {
   if (typeof AudioContext === 'undefined') return null;
   const context = new AudioContext({ latencyHint: 'interactive' });
   live = { context, buses: buildBuses(context) };
+  if (document.hidden) {
+    suspendedWhileHidden = true;
+    void context.suspend();
+  }
 
-  // Go quiet while the tab is hidden, and pick up again when it's back.
+  // A hidden tab never makes sound: go quiet while hidden, and pick up again when it's back.
   document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'hidden' && context.state === 'running') {
+    if (document.hidden && context.state === 'running') {
       suspendedWhileHidden = true;
       void context.suspend();
-    } else if (document.visibilityState === 'visible' && suspendedWhileHidden) {
+    } else if (!document.hidden && suspendedWhileHidden) {
       suspendedWhileHidden = false;
       void context.resume();
     }
@@ -99,15 +103,16 @@ export function getAudio(): { context: AudioContext; buses: Buses } | null {
  * Returns a function that cancels the wait.
  */
 export function whenRunning(context: AudioContext, callback: () => void): () => void {
-  if (context.state === 'running') {
+  if (context.state === 'running' && !document.hidden) {
     callback();
     return () => undefined;
   }
   const resume = () => {
+    if (document.hidden) return; // Wait until the tab is visible again.
     context.resume().catch(() => undefined);
   };
   const onStateChange = () => {
-    if (context.state !== 'running') return;
+    if (context.state !== 'running' || document.hidden) return;
     cancel();
     callback();
   };

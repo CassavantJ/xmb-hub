@@ -4,6 +4,8 @@
 }
 
 .bio {
+  display: grid;
+  gap: 1rem;
   margin-bottom: 2rem;
   font-size: 1.05rem;
   line-height: 1.6;
