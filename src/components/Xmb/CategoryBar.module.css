@@ -16,13 +16,28 @@
   gap: 0.5rem;
   pointer-events: auto;
   transform: translateX(calc(var(--offset) * var(--cat-gap)));
+  transition: transform var(--dur) var(--ease-out);
+}
+
+.tab:focus-visible {
+  outline: none;
 }
 
 .icon {
   width: var(--cat-size);
   height: var(--cat-size);
+  border-radius: 0.75rem;
   opacity: 0.6;
   transform: scale(0.72);
+  transition:
+    transform var(--dur) var(--ease-out),
+    opacity var(--dur-fast) ease,
+    filter var(--dur-fast) ease;
+}
+
+.tab:focus-visible .icon {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 0.5rem;
 }
 
 .label {
@@ -32,6 +47,7 @@
   letter-spacing: 0.01em;
   white-space: nowrap;
   opacity: 0;
+  transition: opacity var(--dur-fast) ease;
 }
 
 .tab[aria-selected='true'] .icon {
@@ -43,4 +59,14 @@
 .tab[aria-selected='true'] .label {
   opacity: 1;
   text-shadow: 0 0 0.75rem var(--glow);
+}
+
+@media (hover: hover) {
+  .tab:hover .icon {
+    opacity: 0.95;
+  }
+
+  .tab[aria-selected='false']:hover .label {
+    opacity: 0.75;
+  }
 }

@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { useId, type FocusEvent, type MouseEvent, type RefCallback } from 'react';
 
 import { Icon } from '../../icons/Icon';
 import type { MenuItem } from '../../menu/types';
@@ -8,9 +8,19 @@ interface MenuItemRowProps {
   item: MenuItem;
   /** Position relative to the selected item: 0 is selected, negative sits above the bar. */
   offset: number;
+  elementRef: RefCallback<HTMLElement>;
+  onClick: (event: MouseEvent<HTMLElement>) => void;
+  /** Keyboard focus only. Focus from a mouse press must not move the list mid-click. */
+  onKeyboardFocus: () => void;
 }
 
-export function MenuItemRow({ item, offset }: MenuItemRowProps) {
+export function MenuItemRow({
+  item,
+  offset,
+  elementRef,
+  onClick,
+  onKeyboardFocus,
+}: MenuItemRowProps) {
   const id = useId();
   const titleId = `${id}-title`;
   const descriptionId = `${id}-description`;
@@ -21,12 +31,17 @@ export function MenuItemRow({ item, offset }: MenuItemRowProps) {
     className: styles.item,
     'data-position': offset === 0 ? 'current' : offset < 0 ? 'before' : 'after',
     style: { '--offset': offset },
+    tabIndex: offset === 0 ? 0 : -1,
     'aria-labelledby': titleId,
     'aria-describedby': descriptionId,
+    onClick,
+    onFocus: (event: FocusEvent<HTMLElement>) => {
+      if (event.currentTarget.matches(':focus-visible')) onKeyboardFocus();
+    },
   };
 
   const content = (
-    <>
+    <span className={styles.inner} data-shake="">
       <Icon icon={item.icon} className={styles.icon} />
       <span className={styles.text}>
         <span id={titleId} className={styles.title}>
@@ -43,13 +58,14 @@ export function MenuItemRow({ item, offset }: MenuItemRowProps) {
           {newTab && <span className="sr-only"> (opens in a new tab)</span>}
         </span>
       </span>
-    </>
+    </span>
   );
 
   if (action.kind === 'link' || action.kind === 'embed') {
     return (
       <a
         {...shared}
+        ref={elementRef}
         href={action.href}
         target={newTab ? '_blank' : undefined}
         rel={newTab ? 'noopener' : undefined}
@@ -60,7 +76,7 @@ export function MenuItemRow({ item, offset }: MenuItemRowProps) {
   }
 
   return (
-    <button {...shared} type="button" aria-disabled={item.disabled || undefined}>
+    <button {...shared} ref={elementRef} type="button" aria-disabled={item.disabled || undefined}>
       {content}
     </button>
   );

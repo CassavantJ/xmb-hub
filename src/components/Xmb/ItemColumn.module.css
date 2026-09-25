@@ -1,10 +1,21 @@
+/* Columns ride along with their category: the old one slides out as the new one slides in. */
 .panel {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  transform: translateX(calc(var(--cat-offset) * var(--cat-gap)));
+  transition:
+    transform var(--dur) var(--ease-out),
+    opacity var(--dur-fast) ease,
+    visibility 0s;
 }
 
-/* `visibility` rather than `display` so Phase 2 can fade columns in and out. */
+/* `visibility` (not `display`) so the fade can run; hidden columns leave the a11y tree. */
 .panel[data-active='false'] {
+  opacity: 0;
   visibility: hidden;
+  transition:
+    transform var(--dur) var(--ease-out),
+    opacity var(--dur-fast) ease,
+    visibility 0s var(--dur-fast);
 }

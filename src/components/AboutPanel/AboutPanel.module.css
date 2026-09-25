@@ -1,0 +1,48 @@
+.headline {
+  margin-bottom: 1.25rem;
+  color: var(--text-muted);
+}
+
+.bio {
+  margin-bottom: 2rem;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.links {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.link {
+  display: grid;
+  grid-template-columns: 1.75rem 1fr;
+  align-items: center;
+  gap: 1rem;
+  margin: 0 -1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+}
+
+/* :focus (not just :focus-visible) so gamepad users see where they are. */
+.link:hover,
+.link:focus {
+  background: rgb(255 255 255 / 0.08);
+}
+
+.icon {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.linkTitle {
+  display: block;
+  font-size: 1.05rem;
+  font-weight: 400;
+}
+
+.linkDescription {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}

@@ -11,6 +11,7 @@ import {
   Cpu,
   Dices,
   Dumbbell,
+  ExternalLink,
   FlaskConical,
   FolderGit2,
   Gamepad2,
@@ -38,6 +39,7 @@ import {
   Volume2,
   Waves,
   Wrench,
+  X,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -59,6 +61,7 @@ export const icons = {
   cpu: Cpu,
   dice: Dices,
   dumbbell: Dumbbell,
+  'external-link': ExternalLink,
   flask: FlaskConical,
   'folder-git': FolderGit2,
   gamepad: Gamepad2,
@@ -86,6 +89,7 @@ export const icons = {
   volume: Volume2,
   waves: Waves,
   wrench: Wrench,
+  x: X,
 } as const satisfies Record<string, LucideIcon>;
 
 export type IconName = keyof typeof icons;

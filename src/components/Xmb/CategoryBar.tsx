@@ -6,9 +6,10 @@ import { panelId, tabId } from './ids';
 interface CategoryBarProps {
   categories: readonly MenuCategory[];
   selected: number;
+  onSelect: (index: number) => void;
 }
 
-export function CategoryBar({ categories, selected }: CategoryBarProps) {
+export function CategoryBar({ categories, selected, onSelect }: CategoryBarProps) {
   return (
     <div role="tablist" aria-label="Categories" className={styles.bar}>
       {categories.map((category, index) => {
@@ -24,6 +25,9 @@ export function CategoryBar({ categories, selected }: CategoryBarProps) {
             tabIndex={isSelected ? 0 : -1}
             className={styles.tab}
             style={{ '--offset': index - selected }}
+            onClick={() => {
+              onSelect(index);
+            }}
           >
             <Icon icon={category.icon} className={styles.icon} />
             <span className={styles.label}>{category.label}</span>

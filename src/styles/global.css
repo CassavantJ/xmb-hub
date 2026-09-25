@@ -14,6 +14,18 @@
   --text-muted: rgb(255 255 255 / 0.82);
   --glow: rgb(255 255 255 / 0.55);
   --focus-ring: #fff;
+
+  /* Motion. Every transition uses these, so reduced motion is one switch. */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur: 320ms;
+  --dur-fast: 180ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur: 0ms;
+    --dur-fast: 0ms;
+  }
 }
 
 *,
@@ -25,6 +37,8 @@
 html,
 body {
   height: 100%;
+  /* No pull-to-refresh or history swipes: the menu owns those gestures. */
+  overscroll-behavior: none;
 }
 
 body {

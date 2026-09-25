@@ -2,6 +2,7 @@ import type { CategoryConfig } from '../data/categories';
 import type { Profile, ProfileLink } from '../data/profile';
 import type { AppEntry, AppStatus } from '../data/schema';
 import type { SettingEntry } from '../data/settings';
+import { opensInNewTab } from '../lib/links';
 import type { MenuAction, MenuCategory, MenuItem } from './types';
 
 export interface MenuSources {
@@ -52,7 +53,7 @@ export function appToItem(app: AppEntry): MenuItem {
 
 function appAction(app: AppEntry): MenuAction {
   if (app.status === 'coming-soon') return { kind: 'none' };
-  if (app.openMode === 'embedded') return { kind: 'embed', href: `/app/${app.id}`, src: app.url };
+  if (app.openMode === 'embedded') return { kind: 'embed', appId: app.id, href: `/app/${app.id}` };
   return { kind: 'link', href: app.url, newTab: app.openMode === 'new-tab' };
 }
 
@@ -76,7 +77,7 @@ function linkToItem(link: ProfileLink): MenuItem {
     icon: link.icon,
     badge: null,
     disabled: false,
-    action: { kind: 'link', href: link.url, newTab: !link.url.startsWith('mailto:') },
+    action: { kind: 'link', href: link.url, newTab: opensInNewTab(link.url) },
   };
 }
 

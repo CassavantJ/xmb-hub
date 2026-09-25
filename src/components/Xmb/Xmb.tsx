@@ -1,33 +1,139 @@
-import { useState } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState, type MouseEvent } from 'react';
 
-import type { MenuCategory } from '../../menu/types';
+import { useIntentLayer } from '../../input/useIntentLayer';
+import type { MenuPosition } from '../../menu/menu';
+import type { MenuAction, MenuCategory } from '../../menu/types';
 import { CategoryBar } from './CategoryBar';
+import { playDenied } from './feedback';
 import { ItemColumn } from './ItemColumn';
+import { createSelection, selectedItem, withCategory, withItem, type Selection } from './selection';
 import styles from './Xmb.module.css';
 
 interface XmbProps {
   menu: readonly MenuCategory[];
-  initialCategory: number;
+  initial: MenuPosition;
+  /** Opens an item. Plain links clicked with the mouse are followed by the browser instead. */
+  onOpen: (action: MenuAction) => void;
 }
 
-export function Xmb({ menu, initialCategory }: XmbProps) {
-  // Phase 1 renders a fixed selection. Phase 2 drives it from keyboard, mouse, touch and gamepad.
-  const [selection] = useState(() => ({
-    category: initialCategory,
-    items: menu.map(() => 0),
-  }));
+const itemKey = (category: number, item: number) => `${category}:${item}`;
+
+export function Xmb({ menu, initial, onOpen }: XmbProps) {
+  const counts = useMemo(() => menu.map((category) => category.items.length), [menu]);
+  const [selection, setSelection] = useState(() =>
+    createSelection(counts, initial.category, initial.item),
+  );
+  // Several intents can land before React re-renders (a fast swipe, one gamepad frame), so input
+  // handlers read and write this ref rather than the render-time `selection`.
+  const latest = useRef(selection);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const itemElements = useRef(new Map<string, HTMLElement>());
+  const focusFollows = useRef(false);
+
+  // Moves from keys, wheel, touch and gamepad carry DOM focus along with the selection, so screen
+  // readers announce the new item. Focus is only taken if it's already in the menu (or nowhere).
+  useLayoutEffect(() => {
+    if (!focusFollows.current) return;
+    focusFollows.current = false;
+    const active = document.activeElement;
+    if (active && active !== document.body && !rootRef.current?.contains(active)) return;
+    const key = itemKey(selection.category, selectedItem(selection));
+    itemElements.current.get(key)?.focus({ preventScroll: true });
+  }, [selection]);
+
+  /** The one place selection changes. `followFocus` is for non-pointer input. */
+  const update = (change: (current: Selection) => Selection, followFocus: boolean) => {
+    const next = change(latest.current);
+    if (next === latest.current) return;
+    latest.current = next;
+    if (followFocus) focusFollows.current = true;
+    setSelection(next);
+  };
+
+  const activate = (category: number, item: number) => {
+    const entry = menu[category]?.items[item];
+    if (!entry) return;
+    if (entry.disabled) playDenied(itemElements.current.get(itemKey(category, item)));
+    else onOpen(entry.action);
+  };
+
+  useIntentLayer((intent) => {
+    switch (intent.type) {
+      case 'move': {
+        const step = intent.direction === 'up' || intent.direction === 'left' ? -1 : 1;
+        const horizontal = intent.direction === 'left' || intent.direction === 'right';
+        update(
+          (current) =>
+            horizontal
+              ? withCategory(current, current.category + step, counts)
+              : withItem(current, selectedItem(current) + step, counts),
+          true,
+        );
+        return true;
+      }
+      case 'jump':
+        update((current) => withItem(current, intent.to === 'first' ? 0 : Infinity, counts), true);
+        return true;
+      case 'confirm':
+        activate(latest.current.category, selectedItem(latest.current));
+        return true;
+      case 'back':
+      case 'home':
+        return false;
+    }
+  });
+
+  const handleItemClick = (category: number, item: number, event: MouseEvent<HTMLElement>) => {
+    const entry = menu[category]?.items[item];
+    if (!entry) return;
+    update((current) => withItem(current, item, counts, category), false);
+    if (entry.disabled) {
+      event.preventDefault();
+      playDenied(event.currentTarget);
+      return;
+    }
+    const { action } = entry;
+    // Real links: let the browser handle them, including Ctrl/Cmd/Shift-click.
+    if (action.kind === 'link') return;
+    if (action.kind === 'embed' && isModifiedClick(event)) return;
+    event.preventDefault();
+    onOpen(action);
+  };
 
   return (
-    <div className={styles.xmb}>
-      <CategoryBar categories={menu} selected={selection.category} />
-      {menu.map((category, index) => (
+    <div ref={rootRef} className={styles.xmb} data-swipe-area="">
+      <CategoryBar
+        categories={menu}
+        selected={selection.category}
+        onSelect={(category) => {
+          update((current) => withCategory(current, category, counts), false);
+        }}
+      />
+      {menu.map((category, categoryIndex) => (
         <ItemColumn
           key={category.id}
           category={category}
-          active={index === selection.category}
-          selected={selection.items[index] ?? 0}
+          offset={categoryIndex - selection.category}
+          selected={selection.items[categoryIndex] ?? 0}
+          itemRef={(item) => (element) => {
+            const key = itemKey(categoryIndex, item);
+            if (element) itemElements.current.set(key, element);
+            return () => {
+              itemElements.current.delete(key);
+            };
+          }}
+          onItemClick={(item, event) => {
+            handleItemClick(categoryIndex, item, event);
+          }}
+          onItemKeyboardFocus={(item) => {
+            update((current) => withItem(current, item, counts, categoryIndex), false);
+          }}
         />
       ))}
     </div>
   );
+}
+
+function isModifiedClick(event: MouseEvent) {
+  return event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
 }

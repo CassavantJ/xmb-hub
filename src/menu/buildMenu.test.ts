@@ -30,8 +30,8 @@ describe('appToItem', () => {
   it('routes embedded apps through /app/<id>', () => {
     expect(appToItem({ ...app, openMode: 'embedded' }).action).toEqual({
       kind: 'embed',
+      appId: 'demo',
       href: '/app/demo',
-      src: app.url,
     });
   });
 

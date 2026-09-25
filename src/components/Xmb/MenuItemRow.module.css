@@ -6,12 +6,9 @@
   right: 1rem;
   max-width: 40rem;
   height: var(--item-icon);
-  display: grid;
-  grid-template-columns: var(--item-icon) minmax(0, 1fr);
-  align-items: center;
-  column-gap: var(--item-text-gap);
   pointer-events: auto;
   transform: translateY(var(--y));
+  transition: transform var(--dur) var(--ease-out);
 }
 
 .item[data-position='current'] {
@@ -28,9 +25,21 @@
   );
 }
 
+.inner {
+  display: grid;
+  grid-template-columns: var(--item-icon) minmax(0, 1fr);
+  align-items: center;
+  column-gap: var(--item-text-gap);
+  height: 100%;
+}
+
 .icon {
   opacity: 0.75;
   transform: scale(0.78);
+  transition:
+    transform var(--dur) var(--ease-out),
+    opacity var(--dur-fast) ease,
+    filter var(--dur-fast) ease;
 }
 
 .text {
@@ -46,6 +55,9 @@
   color: var(--text-muted);
   white-space: nowrap;
   text-overflow: ellipsis;
+  transition:
+    color var(--dur-fast) ease,
+    text-shadow var(--dur-fast) ease;
 }
 
 .badge {
@@ -76,6 +88,7 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   line-clamp: 2;
+  transition: opacity var(--dur-fast) ease;
 }
 
 .item[data-position='current'] .icon {
@@ -95,6 +108,44 @@
 }
 
 .item[aria-disabled='true'] {
+  cursor: not-allowed;
+}
+
+.item[aria-disabled='true'] .inner {
   opacity: 0.45;
-  cursor: default;
+}
+
+/* Selection is the primary indicator; keyboard focus adds a soft band behind the row. */
+.item:focus-visible {
+  outline: none;
+}
+
+.item:focus-visible::before {
+  content: '';
+  position: absolute;
+  inset: -0.4rem -0.75rem;
+  border-radius: 0.75rem;
+  background: rgb(255 255 255 / 0.07);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.35);
+}
+
+.item[data-position='current']:focus-visible::before {
+  bottom: calc(var(--item-icon) - var(--sel-h) - 0.4rem);
+}
+
+/* Mouse hover previews an item in place (moving the list under the cursor would fight the pointer). */
+@media (hover: hover) {
+  .item:hover .icon {
+    opacity: 1;
+  }
+
+  .item:hover .title {
+    color: var(--text);
+  }
+
+  .item[data-position='after']:hover .description {
+    opacity: 1;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+  }
 }

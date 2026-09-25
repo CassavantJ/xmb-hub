@@ -1,0 +1,76 @@
+.panel {
+  position: fixed;
+  inset: 0 0 0 auto;
+  width: min(30rem, 100vw);
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: var(--text);
+  background: linear-gradient(
+    90deg,
+    oklch(0.14 calc(var(--theme-c) * 0.4) var(--theme-h) / 0.88),
+    oklch(0.1 calc(var(--theme-c) * 0.3) var(--theme-h) / 0.96)
+  );
+  box-shadow: -1px 0 0 rgb(255 255 255 / 0.12);
+  transition:
+    transform var(--dur) var(--ease-out),
+    opacity var(--dur) var(--ease-out);
+}
+
+@starting-style {
+  .panel[open] {
+    transform: translateX(2.5rem);
+    opacity: 0;
+  }
+}
+
+.panel::backdrop {
+  background: rgb(0 0 0 / 0.4);
+}
+
+.sheet {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: clamp(1.5rem, 8dvh, 4rem) 1.25rem 1.25rem 2rem;
+}
+
+.title {
+  font-size: 1.6rem;
+  font-weight: 300;
+}
+
+.close {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
+}
+
+.close:hover {
+  background: rgb(255 255 255 / 0.1);
+}
+
+.closeIcon {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+.body {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0 2rem 2rem;
+}

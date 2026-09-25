@@ -1,12 +1,17 @@
 /*
  * Layout tokens shared by the category bar and item columns. Everything is positioned from two
  * reference lines: --anchor-x (center of the selected category's column) and --bar-y (top of the
- * category bar). Elements move with transforms only, so Phase 2 can animate them cheaply.
+ * category bar). Elements move with transforms only, so transitions stay on the compositor.
  */
 .xmb {
   position: fixed;
   inset: 0;
   overflow: hidden;
+  /* Swipes drive the menu; pinch-zoom stays available. */
+  touch-action: pinch-zoom;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
 
   --anchor-x: clamp(5.5rem, 26vw, 34rem);
   --bar-y: clamp(5rem, 24dvh, 15rem);
