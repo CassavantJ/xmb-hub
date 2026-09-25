@@ -18,67 +18,67 @@ interface Voice {
 }
 
 /**
- * Original sounds in the spirit of a classic console menu: soft ticks and rounded pops in a
- * little shared reverb. They lean percussive rather than tonal: short noise clicks carry the
- * attack, and the pitched parts are brief, low and filtered so nothing reads as a "beep".
+ * Original sounds in the spirit of a classic console menu: crisp, high ticks and short pops in a
+ * little shared reverb. They lean percussive rather than tonal: short noise clicks in the 3–5 kHz
+ * range carry each sound, and the pitched parts are too brief to read as a "beep".
  */
 const SOUNDS: Record<SoundName, readonly Voice[]> = {
-  // A light tick: mostly a click of band-passed noise, with a hint of filtered body.
+  // A crisp, high tick: a very short click with a touch of bright body.
   move: [
     {
       source: 'noise',
-      filter: { type: 'bandpass', frequency: 2200, q: 0.8 },
-      duration: 0.018,
-      volume: 0.28,
+      filter: { type: 'bandpass', frequency: 5000, q: 1 },
+      duration: 0.012,
+      volume: 0.24,
       attack: 0.001,
     },
     {
       source: 'triangle',
-      from: 900,
-      to: 700,
-      duration: 0.03,
-      volume: 0.05,
+      from: 2400,
+      to: 2100,
+      duration: 0.018,
+      volume: 0.03,
       attack: 0.001,
-      filter: { type: 'lowpass', frequency: 1600 },
+      filter: { type: 'lowpass', frequency: 4000 },
     },
   ],
-  // A soft, rounded pop that lifts, over a low thump.
+  // A bright click that lifts, over a light thump.
   confirm: [
     {
       source: 'noise',
-      filter: { type: 'bandpass', frequency: 1400, q: 0.8 },
-      duration: 0.02,
-      volume: 0.14,
+      filter: { type: 'bandpass', frequency: 4000, q: 0.9 },
+      duration: 0.015,
+      volume: 0.2,
       attack: 0.001,
     },
     {
       source: 'sine',
-      from: 300,
-      to: 520,
-      duration: 0.09,
-      volume: 0.14,
-      filter: { type: 'lowpass', frequency: 1200 },
+      from: 700,
+      to: 1100,
+      duration: 0.06,
+      volume: 0.1,
+      filter: { type: 'lowpass', frequency: 2500 },
     },
-    { source: 'sine', from: 160, to: 110, duration: 0.08, volume: 0.1 },
+    { source: 'sine', from: 200, to: 140, duration: 0.06, volume: 0.06 },
   ],
   // The same shape, falling.
   back: [
     {
       source: 'noise',
-      filter: { type: 'bandpass', frequency: 1200, q: 0.8 },
-      duration: 0.02,
-      volume: 0.12,
+      filter: { type: 'bandpass', frequency: 3500, q: 0.9 },
+      duration: 0.015,
+      volume: 0.18,
       attack: 0.001,
     },
     {
       source: 'sine',
-      from: 480,
-      to: 260,
-      duration: 0.09,
-      volume: 0.12,
-      filter: { type: 'lowpass', frequency: 1100 },
+      from: 1000,
+      to: 600,
+      duration: 0.06,
+      volume: 0.09,
+      filter: { type: 'lowpass', frequency: 2200 },
     },
-    { source: 'sine', from: 140, to: 100, duration: 0.07, volume: 0.08 },
+    { source: 'sine', from: 180, to: 120, duration: 0.05, volume: 0.05 },
   ],
   // A dull, low bump.
   denied: [
