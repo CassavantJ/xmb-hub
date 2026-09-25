@@ -24,18 +24,19 @@ interface Voice {
  */
 const SOUNDS: Record<SoundName, readonly Voice[]> = {
   // A small metallic "tik-ting": a very short click, then a brief ring of inharmonic partials
-  // (ratios ~1 : 1.43 : 2.25, like a struck bar), each dying faster the higher it is.
+  // (~5.0, 7.2 and 11.3 kHz: ratios ~1 : 1.43 : 2.25, like a struck bar), each dying faster
+  // the higher it is.
   move: [
     {
       source: 'noise',
-      filter: { type: 'bandpass', frequency: 6000, q: 1.2 },
+      filter: { type: 'bandpass', frequency: 8000, q: 1.2 },
       duration: 0.008,
       volume: 0.18,
       attack: 0.001,
     },
-    { source: 'sine', from: 3150, to: 3090, duration: 0.16, volume: 0.06, attack: 0.001 },
-    { source: 'sine', from: 4520, duration: 0.1, volume: 0.035, attack: 0.001 },
-    { source: 'sine', from: 7090, duration: 0.05, volume: 0.02, attack: 0.001 },
+    { source: 'sine', from: 5040, to: 4940, duration: 0.16, volume: 0.06, attack: 0.001 },
+    { source: 'sine', from: 7230, duration: 0.1, volume: 0.035, attack: 0.001 },
+    { source: 'sine', from: 11340, duration: 0.05, volume: 0.02, attack: 0.001 },
   ],
   // A bright click that lifts, over a light thump.
   confirm: [
