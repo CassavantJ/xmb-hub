@@ -17,21 +17,25 @@ export function buildBuses(context: BaseAudioContext): Buses {
   safety.curve = softClipCurve();
   safety.connect(context.destination);
 
-  const reverb = context.createConvolver();
-  reverb.buffer = impulseResponse(context, 2.6, 2.4);
-  reverb.connect(safety);
-
-  const bus = (level: number, reverbSend: number) => {
+  // Each bus gets its own room: a short, tight one keeps UI sounds crisp; the music gets a long,
+  // spacious one.
+  const bus = (level: number, room: { seconds: number; decay: number; send: number }) => {
+    const reverb = context.createConvolver();
+    reverb.buffer = impulseResponse(context, room.seconds, room.decay);
+    reverb.connect(safety);
     const input = context.createGain();
     input.gain.value = level;
     input.connect(safety);
     const send = context.createGain();
-    send.gain.value = reverbSend;
+    send.gain.value = room.send;
     input.connect(send).connect(reverb);
     return input;
   };
 
-  return { sfx: bus(1.2, 0.1), music: bus(0, 0.6) };
+  return {
+    sfx: bus(1.2, { seconds: 0.5, decay: 3, send: 0.08 }),
+    music: bus(0, { seconds: 2.6, decay: 2.4, send: 0.6 }),
+  };
 }
 
 const noiseBuffers = new WeakMap<BaseAudioContext, AudioBuffer>();
