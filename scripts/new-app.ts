@@ -16,6 +16,8 @@ import { dirname, extname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 
+import * as prettier from 'prettier';
+
 import { site, siteUrl } from '../src/data/site.ts';
 
 interface PackageJson {
@@ -88,6 +90,14 @@ const tokens: Record<string, string> = {
 const fill = (text: string) =>
   Object.entries(tokens).reduce((result, [token, value]) => result.replaceAll(token, value), text);
 
+// The app gets the hub's Prettier settings (copied below), so format with them: a long title or
+// description can push a filled-in line past the print width.
+const prettierOptions = await prettier.resolveConfig(join(hubDir, 'package.json'));
+async function format(path: string, text: string): Promise<string> {
+  const { inferredParser } = await prettier.getFileInfo(path);
+  return inferredParser ? prettier.format(text, { ...prettierOptions, filepath: path }) : text;
+}
+
 async function copyTemplate(from: string, to: string): Promise<void> {
   await mkdir(to, { recursive: true });
   for (const entry of await readdir(from, { withFileTypes: true })) {
@@ -95,7 +105,7 @@ async function copyTemplate(from: string, to: string): Promise<void> {
     const destination = join(to, entry.name);
     if (entry.isDirectory()) await copyTemplate(source, destination);
     else if (TEXT_EXTENSIONS.has(extname(entry.name)) || entry.name === '_headers') {
-      await writeFile(destination, fill(await readFile(source, 'utf8')));
+      await writeFile(destination, await format(destination, fill(await readFile(source, 'utf8'))));
     } else await copyFile(source, destination);
   }
 }
