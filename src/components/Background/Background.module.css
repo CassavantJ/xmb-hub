@@ -19,3 +19,9 @@
 .waves[data-visible='true'] {
   opacity: 1;
 }
+
+.waves canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
