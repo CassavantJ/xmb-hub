@@ -12,7 +12,8 @@ pnpm install
 pnpm dev
 ```
 
-`pnpm check` runs the typecheck, lint and format check; CI runs it on every push.
+`pnpm check` runs the typecheck, lint, format check and tests (Vitest, any `*.test.ts` under
+`src/`); CI runs it on every push.
 
 ## Deploy
 

@@ -29,12 +29,13 @@ pnpm new-app lift-log "Lift Log" "Log workouts and watch your lifts trend upward
 
 This creates `../lift-log`, next to the hub (for example `Documents\Claude Apps\lift-log`), with:
 
-- React, TypeScript and Vite at the **same versions as the hub**, plus the same lint, format and
-  CI setup
+- React, TypeScript and Vite at the **same versions as the hub**, plus the same lint, format,
+  test (Vitest) and CI setup
 - the hub's **look**: the monthly theme, Inter, and a slim "‹ Jake" bar linking back to the hub
   (hidden automatically when the hub embeds the app)
-- **security headers** in `public/_headers` that already allow the hub to embed it
-- the hub's favicon, and a first git commit
+- **security headers** in `public/_headers` that already allow the hub to embed it, and a
+  `robots.txt`
+- the hub's favicon (swap in your own), and a first git commit
 
 It also prints the registry entry for step 5. Then start building:
 

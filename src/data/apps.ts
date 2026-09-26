@@ -5,7 +5,8 @@ import { site, subdomain } from './site';
  * The app registry. Adding an app to the hub means adding one entry here.
  * Items appear under their category in the order they're listed.
  *
- * Everything except `xmb-hub` is a placeholder to populate the layout. Replace them before launch.
+ * Lift Log, Palette and Orbit are real apps in their own repos (see ADDING_AN_APP.md). Field
+ * Notes is a placeholder, listed as coming soon.
  */
 export const apps: readonly AppEntry[] = [
   {
@@ -18,6 +19,7 @@ export const apps: readonly AppEntry[] = [
     openMode: 'new-tab',
     status: 'beta',
     tags: ['fitness', 'pwa'],
+    repo: 'https://github.com/CassavantJ/lift-log',
   },
   {
     id: 'field-notes',
@@ -27,7 +29,7 @@ export const apps: readonly AppEntry[] = [
     icon: 'notebook',
     url: subdomain('field-notes'),
     openMode: 'same-tab',
-    status: 'live',
+    status: 'coming-soon',
   },
   {
     id: 'palette',
@@ -39,6 +41,7 @@ export const apps: readonly AppEntry[] = [
     openMode: 'embedded',
     status: 'live',
     tags: ['design', 'color'],
+    repo: 'https://github.com/CassavantJ/palette',
   },
   {
     id: 'orbit',
@@ -48,7 +51,9 @@ export const apps: readonly AppEntry[] = [
     icon: 'rocket',
     url: subdomain('orbit'),
     openMode: 'embedded',
-    status: 'coming-soon',
+    status: 'live',
+    tags: ['game', 'canvas'],
+    repo: 'https://github.com/CassavantJ/orbit',
   },
   {
     id: 'xmb-hub',
