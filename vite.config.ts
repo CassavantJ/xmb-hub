@@ -1,12 +1,17 @@
 import react from '@vitejs/plugin-react';
 import { defineConfig, type Plugin } from 'vite';
 
-import { siteUrl } from './src/data/site.ts';
-import { robotsTxt, sitemapXml } from './src/seo/siteFiles.ts';
+import { site, siteUrl } from './src/data/site.ts';
+import {
+  robotsTxt,
+  securityHeaders,
+  securityHeaderValues,
+  sitemapXml,
+} from './src/seo/siteFiles.ts';
 
 /**
  * Keeps the domain in one place (src/data/site.ts): fills `%SITE_URL%` in the HTML pages and
- * emits robots.txt and sitemap.xml at build time.
+ * emits robots.txt, sitemap.xml and Cloudflare's _headers at build time.
  */
 function siteFiles(): Plugin {
   return {
@@ -17,6 +22,7 @@ function siteFiles(): Plugin {
       handler: (html) => html.replaceAll('%SITE_URL%', siteUrl),
     },
     generateBundle() {
+      this.emitFile({ type: 'asset', fileName: '_headers', source: securityHeaders(site.domain) });
       this.emitFile({ type: 'asset', fileName: 'robots.txt', source: robotsTxt(siteUrl) });
       this.emitFile({
         type: 'asset',
@@ -33,7 +39,8 @@ export default defineConfig({
   // Fixed ports (Vite's 5173/4173 defaults are taken by other local apps). strictPort fails loudly
   // instead of silently moving to the next free port.
   server: { port: 5180, strictPort: true },
-  preview: { port: 4180, strictPort: true },
+  // The production security headers, so `pnpm preview` catches anything the CSP would block.
+  preview: { port: 4180, strictPort: true, headers: securityHeaderValues(site.domain) },
   build: {
     rolldownOptions: {
       // 404.html is its own page so Cloudflare Pages can serve it with a real 404 status.

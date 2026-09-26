@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 import { isSvgPath } from '../icons/icons';
 import { apps } from './apps';
+import { site } from './site';
 
 const publicDir = new URL('../../public/', import.meta.url);
 
@@ -39,8 +40,10 @@ describe('app registry', () => {
       expect(app.repo).toMatch(/^https:\/\//);
     });
 
-    it.runIf(app.openMode === 'embedded')('embeds an https URL', () => {
-      expect(app.url).toMatch(/^https:\/\//);
+    // The Content Security Policy (src/seo/siteFiles.ts) only allows framing these.
+    it.runIf(app.openMode === 'embedded')(`embeds an app on a *.${site.domain} subdomain`, () => {
+      expect(new URL(app.url).protocol).toBe('https:');
+      expect(new URL(app.url).hostname.endsWith(`.${site.domain}`)).toBe(true);
     });
 
     it.runIf(isSvgPath(app.icon))('uses an SVG icon that exists in public/', () => {

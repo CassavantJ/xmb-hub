@@ -1,6 +1,29 @@
 import { describe, expect, it } from 'vitest';
 
-import { robotsTxt, sitemapXml } from './siteFiles';
+import { robotsTxt, securityHeaders, sitemapXml } from './siteFiles';
+
+describe('security headers', () => {
+  const headers = securityHeaders('raylmao.com');
+  const csp = /Content-Security-Policy: (.*)/.exec(headers)?.[1] ?? '';
+
+  it('stays within Cloudflare Pages limits (2,000 characters per line)', () => {
+    for (const line of headers.split('\n')) expect(line.length).toBeLessThanOrEqual(2000);
+  });
+
+  it('only frames apps on the site’s own subdomains, and is never framed itself', () => {
+    expect(csp).toContain('frame-src https://*.raylmao.com');
+    expect(csp).toContain("frame-ancestors 'none'");
+  });
+
+  it('allows Cloudflare Web Analytics and nothing else third-party', () => {
+    expect(csp).toContain("script-src 'self' https://static.cloudflareinsights.com;");
+    expect(csp).toContain("connect-src 'self' https://cloudflareinsights.com;");
+  });
+
+  it('caches hashed assets for a year', () => {
+    expect(headers).toMatch(/\/assets\/\*\n {2}Cache-Control: public, max-age=31536000, immutable/);
+  });
+});
 
 describe('site files', () => {
   it('allows crawling and links the sitemap', () => {
