@@ -1,3 +1,5 @@
 dist
 coverage
 pnpm-lock.yaml
+# Placeholders like __APP_TITLE__ would be rewritten to **APP_TITLE** by the Markdown formatter.
+templates/**/*.md

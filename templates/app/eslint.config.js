@@ -8,7 +8,7 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default defineConfig([
-  globalIgnores(['dist', 'coverage', 'templates']),
+  globalIgnores(['dist']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -27,8 +27,6 @@ export default defineConfig([
       },
     },
     rules: {
-      // `<ul role="list">` restores list semantics that Safari drops when `list-style: none`.
-      'jsx-a11y/no-redundant-roles': ['error', { nav: ['navigation'], ul: ['list'] }],
       '@typescript-eslint/restrict-template-expressions': ['error', { allowNumber: true }],
     },
   },

@@ -1,0 +1,41 @@
+{
+  "name": "__APP_ID__",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "packageManager": "__PACKAGE_MANAGER__",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b",
+    "lint": "eslint .",
+    "format": "prettier . --write",
+    "check": "tsc -b && eslint . && prettier . --check"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "*",
+    "react": "*",
+    "react-dom": "*"
+  },
+  "devDependencies": {
+    "@eslint/js": "*",
+    "@types/node": "*",
+    "@types/react": "*",
+    "@types/react-dom": "*",
+    "@vitejs/plugin-react": "*",
+    "eslint": "*",
+    "eslint-config-prettier": "*",
+    "eslint-plugin-jsx-a11y": "*",
+    "eslint-plugin-react-hooks": "*",
+    "eslint-plugin-react-refresh": "*",
+    "globals": "*",
+    "prettier": "*",
+    "typescript": "*",
+    "typescript-eslint": "*",
+    "vite": "*"
+  }
+}
