@@ -65,6 +65,7 @@ export const apps: readonly AppEntry[] = [
     openMode: 'embedded',
     status: 'live',
     tags: ['game', 'strategy', '3d'],
+    repo: 'https://github.com/CassavantJ/hot-war',
   },
   {
     id: 'loopland',
