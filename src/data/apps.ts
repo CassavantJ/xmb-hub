@@ -5,7 +5,7 @@ import { site, subdomain } from './site';
  * The app registry. Adding an app to the hub means adding one entry here.
  * Items appear under their category in the order they're listed.
  *
- * Lift Log, Palette, Orbit and Epochs are real apps in their own repos (see ADDING_AN_APP.md). Field
+ * Lift Log, Palette, Orbit, Epochs and Gotcha are real apps in their own repos (see ADDING_AN_APP.md). Field
  * Notes is a placeholder, listed as coming soon.
  */
 export const apps: readonly AppEntry[] = [
@@ -54,6 +54,18 @@ export const apps: readonly AppEntry[] = [
     status: 'live',
     tags: ['game', 'strategy', 'canvas'],
     repo: 'https://github.com/CassavantJ/epochs',
+  },
+  {
+    id: 'gotcha',
+    title: 'Gotcha!',
+    description: 'Fifty trick questions, three lives. Nothing is what it seems.',
+    category: 'games',
+    icon: 'puzzle',
+    url: subdomain('gotcha'),
+    openMode: 'embedded',
+    status: 'live',
+    tags: ['game', 'quiz'],
+    repo: 'https://github.com/CassavantJ/gotcha',
   },
   {
     id: 'orbit',
